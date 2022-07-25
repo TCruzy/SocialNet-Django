@@ -19,14 +19,14 @@
             <h1>That User is Private</h2>
         </div>
     {% endif %}
-    {% if user.profile_info == 'Followers' and request.session.username in follower_usernames %}   
+    {% if user.profile_info == 'Followers' and request.user.username in follower_usernames %}   
         <h2>That User Posted <a href="{% url 'soc:user_posts' user.id %}">{{posts_count}}</a> Status</h2>
         <h2>That User Liked <a href="#" data-toggle="modal" data-target="#liked_posts">{{likes_amount}}</a> Post</h2>
         <h2>That User Reached {{liked_amount}} Likes On His/Her Posts</h2>
         <h2>That User Have <a href="#"  data-toggle="modal" data-target="#follower">{{follower_amount}}</a> Followers</h2>
         <h2>That User Followed <a href="#"  data-toggle="modal" data-target="#followed">{{followed_amount}}</a> User</h2>
     {% endif %}
-    {% if user.profile_info == 'Followers' and request.session.username not in follower_usernames %}
+    {% if user.profile_info == 'Followers' and request.user.username not in follower_usernames %}
     <div style="text-align: center;">
         <h1>You Are Not {{user.username}}'s Follower and you cant see profile information</h2>
     </div>
@@ -34,7 +34,7 @@
     
 </div>
 
-{% if user.profile_info == 'Followers' and request.session.username in follower_usernames or user.profile_info == 'Public' %}
+{% if user.profile_info == 'Followers' and request.user.username in follower_usernames or user.profile_info == 'Public' %}
     <div id="follower" class="modal fade" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">

@@ -12,7 +12,7 @@
                     <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     </a>
                 
-                    {% if p.user.username == request.session.username %}
+                    {% if p.user.username == request.user.username %}
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                             <a class="dropdown-item" href="{% url 'soc:edit_post' p.post.id %}">Edit Post</a>
                             <a class="dropdown-item" href="{% url 'soc:delete_post' p.post.id %}">Delete Post</a>
@@ -26,7 +26,7 @@
             </div>
             <div><p>post date : {{ p.post.post_date}}</p></div>
             <!-- make a div container for the title -->
-            {% if p.post.poster_type == 'user' and p.user.username == request.session.username %}
+            {% if p.post.poster_type == 'user' and p.user.username == request.user.username %}
             <div class="blog-post-title">
                 <img src="{{p.user.profile_pic.url}}" alt="pfp" width="50" height="50" style="border-radius: 50%">
                 <a href="{% url 'soc:main_profile' p.user.username %}">{{p.user.username|upper}}</a>

@@ -16,7 +16,7 @@
     <header class="main-header">
         <div class="container">
             <h2>SOCINHO</h2>
-            {% if request.session.username %}
+            {% if request.user.username %}
                 <form action="{% url 'soc:search_name' %}" method="post">
                     {% csrf_token %}
                     <div class="input-group">
@@ -32,18 +32,18 @@
             <nav class="main-navigation">
                 
                 <li><a href="/home">Posts </a></li>
-                {% if 'admin' in request.session %}
+                {% if request.user.username == 'admin' %}
                     <li><a href="{% url 'soc:create_post' %}">Create User Post</a></li>
                     <li><a href="/users">Users</a></li>
-                {% elif 'username' in request.session %}
+                {% elif request.user.username %}
                     <li><a href="/create-post" data-toggle="modal" data-target="#mymodal">Create Post</a></li>
                     <li><a href="/my-posts">My Posts</a></li>
-                    <li><a href="{% url 'soc:main_profile' request.session.username %}">My Profile</a></li>
+                    <li><a href="{% url 'soc:main_profile' request.user.username %}">My Profile</a></li>
 
                 {% endif %}
             </nav>
             <div>
-                {% if request.session.username %}
+                {% if request.user.username %}
                     <li>
                         <form action="{% url 'soc:logout' %}">
                             <button name="submit" type="submit" class="btn btn-danger">Log Out</button>

@@ -12,7 +12,7 @@
                 <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 </a>
               
-                {% if p.user.username == request.session.username %}
+                {% if p.user.username == request.user.username %}
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                         <a class="dropdown-item" href="{% url 'soc:edit_post' p.post.id %}">Edit Post</a>
                         <a class="dropdown-item" href="{% url 'soc:delete_post' p.post.id %}">Delete Post</a>
@@ -25,28 +25,28 @@
             </div>
         </div>
         <div><p>post date : {{ p.post.post_date}}</p></div>
-        {% if p.post.poster_type == 'user' and p.user.username != request.session.username %}
+        {% if p.post.poster_type == 'user' and p.user.username != request.user.username %}
             <a href="{% url 'soc:user_main_profile' p.user.id %}">
                 <div class="blog-post-title">
                     <img src="{{p.user.profile_pic.url}}" alt="pfp" width="50" height="50" style="border-radius: 50%">
                     <h2 style="font-weight: 700;">{{p.user.username|upper}}</h2>        
                 </div>        
             </a>
-        {% elif p.post.poster_type == 'user' and p.user.username == request.session.username %}
+        {% elif p.post.poster_type == 'user' and p.user.username == request.user.username %}
             <a href="{% url 'soc:main_profile' p.user.username %}">
                 <div class="blog-post-title">
                     <img src="{{p.user.profile_pic.url}}" alt="pfp" width="50" height="50" style="border-radius: 50%">
                     <h2 style="font-weight: 700;">{{p.user.username|upper}}</h2>  
                 </div>
         </a>
-        {% elif p.post.poster_type == 'anonym' and  p.user.username == request.session.username %}
+        {% elif p.post.poster_type == 'anonym' and  p.user.username == request.user.username %}
             <a href="{% url 'soc:main_profile' p.user.username %}">
                 <div class="blog-post-title">
                 <img src="{{p.user.profile_pic.url}}" alt="pfp" width="50" height="50" style="border-radius: 50%;">
                     <h3>{{p.user.username|upper}}</h3>
                 </div>
             </a><h4 style="color: rgb(118, 115, 115);margin-top: 7px;">as Anonsymous</h4>
-        {% elif p.post.poster_type == 'anonym' and p.user.username != request.session.username %}
+        {% elif p.post.poster_type == 'anonym' and p.user.username != request.user.username %}
             <div class="blog-post-title">
                 <img src="/media/static/img/anonym.webp" alt="anonym" width="50" style="border-radius: 50px;">
                 <a href="{% url 'soc:anonymous_profile' %}">Anonymous</a>
