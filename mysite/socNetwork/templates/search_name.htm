@@ -1,0 +1,63 @@
+{% extends 'main.htm' %}
+{% block content %}
+{% if users %}
+    <h1 style="text-align: center;">Found {{users|length}} User</h1>
+    <div style="margin-left: 40%;margin-top:10%;">
+        <table class="table table-dark" border="1" style="width: 40%;">
+            <thead>
+            <tr>
+                <th scope="col">Pic</th>
+                <th scope="col">Name</th>
+                <th scope="col">Profile</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+            
+            {% for user in users %}
+                <tr>
+                    <th><img src="{{user.user.profile_pic.url}}" alt="pfp" width="50" height="50" style="border-radius: 30px;"></th>
+                    <th scope="row">{{user.user.username}}</th>
+                    {% if user.user.username == request.session.username %}
+                        <td><a href="{% url 'soc:main_profile' user.user.username %}">{{user.user.username}}</a></td>
+                    {% else %}
+                        <td><a href="{% url 'soc:user_main_profile' user.user.id %}">{{user.user.username}}</a></td>
+                    {% endif %}
+                    
+                    <td>
+                        <form action="{% url 'soc:follow_user' user.user.id %}" method="post">
+                            {% csrf_token %}
+                            {% if user.user.username != request.session.username %}
+                                {% if user.followed_by_me %}
+                                    <input type = "hidden" name = "follow_status" value = "unfollow" />
+                                    <div class="col-auto">
+                                        <button type="submit" class="btn btn-primary mb-2" style="border-radius: 50px;background-color: rgb(196, 46, 19); border-color: rgb(216, 31, 31);">Unfollow</button>
+                                    </div>
+                                {% else %}
+                                    <input type = "hidden" name = "follow_status" value = "follow" />
+                                    <div class="col-auto">
+                                        <button type="submit" class="btn btn-primary mb-2" style="border-radius: 50px;background-color: rgb(28, 196, 19); border-color: rgb(27, 154, 36);">Follow</button>
+                                    </div>
+                                {% endif %}
+                            {% else %}
+                            <div class="col-auto">
+                                <h2>You</h2>
+                            </div>
+                            {% endif %}
+                            
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+<div style="text-align: center;">
+    <h1>No Users Found!</h1>
+</div>
+{% endif %}
+
+
+{% endblock %}
+

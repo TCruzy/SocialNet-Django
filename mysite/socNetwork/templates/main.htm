@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{% static 'socNetwork/style.css' %}">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main</title>
+</head>
+<body>
+    <header class="main-header">
+        <div class="container">
+            <h2>SOCINHO</h2>
+            {% if request.session.username %}
+                <form action="{% url 'soc:search_name' %}" method="post">
+                    {% csrf_token %}
+                    <div class="input-group">
+                        <input type="search" class="form-control rounded" placeholder="search.." aria-label="Search" aria-describedby="search-addon" name="search" required/>
+                        <select class="form-select" aria-label="Default select example" onchange="this.form.submit()" name="search_filter">
+                            <option value="posts" >Posts</option>
+                            <option value="users" selected>Users</option>
+                        </select>
+                    </div>
+                </form>
+            {% endif %}
+    
+            <nav class="main-navigation">
+                
+                <li><a href="/home">Posts </a></li>
+                {% if 'admin' in request.session %}
+                    <li><a href="{% url 'soc:create_post' %}">Create User Post</a></li>
+                    <li><a href="/users">Users</a></li>
+                {% elif 'username' in request.session %}
+                    <li><a href="/create-post" data-toggle="modal" data-target="#mymodal">Create Post</a></li>
+                    <li><a href="/my-posts">My Posts</a></li>
+                    <li><a href="{% url 'soc:main_profile' request.session.username %}">My Profile</a></li>
+
+                {% endif %}
+            </nav>
+            <div>
+                {% if request.session.username %}
+                    <li>
+                        <form action="{% url 'soc:logout' %}">
+                            <button name="submit" type="submit" class="btn btn-danger">Log Out</button>
+                        </form>
+                        
+                    </li>  
+                {% else%}
+                    {% if 'signup' not in request.session %}
+                        <li><a href="/">Login</a></li>
+                    {% else %}
+                        <li><a href="/register">Registration</a></li>
+                    {% endif %}
+                {% endif %}
+            </div>
+                
+            <div class="burger-menu">
+                <div class="burger"></div>  
+            </div>
+        </div>
+    </header>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script>
+    $(".burger-menu").click(function () {
+        $(this).toggleClass("menu-on");
+        $(".main-navigation").toggleClass("active")
+    });
+    $(".main-navigation li a").click(function () {
+        $(".main-navigation").removeClass("active");
+        $(".burger-menu").removeClass("menu-on")
+    });
+    </script>
+    <div id="mymodal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Create Your Post</h4>
+    
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'soc:create_post' %}" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="poster_type" id="flexRadioDefault1" value="anonym">
+                                <label class="form-check-label" for="flexRadioDefault1">
+                                  Anonym Post
+                                </label>
+                              </div>
+                              <div class="form-check">
+                                <input class="form-check-input" type="radio" name="poster_type" id="flexRadioDefault2" checked value="user">
+                                <label class="form-check-label" for="flexRadioDefault2">
+                                  Public
+                                </label>
+                              </div>
+                            <label style="font-size:25px;">Post Content</label>
+                                <textarea class="form-control" aria-label="With textarea" placeholder="Text...." name="post_content" rows="10" cols="200" required></textarea>
+                        </div>
+                        <div class="form-group" style="text-align: center;">
+                            <input type="file" name="image" class="form-control" id="formFile">
+                            <label for="formFile" class="form-label">Upload Item Image</label>
+                        </div>
+    
+                        <div class="form-group" style="text-align: center; margin-top:15px;">
+                            <button class="btn btn-primary" type="submit">Post Status</button>
+    
+                        </div>
+    
+                    </form>
+    
+    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+    
+        </div>
+    
+    </div>
+    
+{% block content %}
+{% endblock %}
+</body>
+</html>
+

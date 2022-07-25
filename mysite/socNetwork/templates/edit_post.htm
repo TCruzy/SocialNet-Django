@@ -1,0 +1,35 @@
+
+{% extends 'main.htm' %}
+{% block content %}
+    <div style="text-align: center; margin-top: 200px;" >
+        <form action="{% url 'soc:edit_post' post.id %}" method="post" enctype="multipart/form-data">
+            <h1 style="text-align: center;">Edit Post</h1>
+            {% csrf_token %}  
+            <div style="text-align: center;">
+                <h3>Audience</h3>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="poster_type" id="flexRadioDefault1" value="anonym">
+                    <label class="form-check-label" for="flexRadioDefault1">
+                      Anonym Post
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="poster_type" id="flexRadioDefault2" checked value="user">
+                    <label class="form-check-label" for="flexRadioDefault2">
+                      Public
+                    </label>
+                  </div>
+            </div>
+            <div class="input-group" style="width:40%; margin-left:500px;resize: none;">
+                <textarea class="form-control" aria-label="With textarea" name="post_content" rows="10" cols="200">{{post.post_content}}</textarea>
+            </div>
+            <div class="form-group" style="text-align: center; margin-left:40%; margin-right: 50%; width: 300px;">
+                <input type="file" name="image" class="form-control" id="formFile">
+                <label for="formFile" class="form-label">Upload Item Image</label>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+{% endblock %}
+
+

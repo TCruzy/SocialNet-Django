@@ -1,0 +1,170 @@
+{% extends 'main.htm' %}
+
+{% block content %}
+<div style="text-align: center;">
+    <img src="{{user.profile_pic.url}}" alt="pfp" width="180" height="180" style="border-radius: 50%;">
+    <div style="text-align: center; margin-top: 10px;" >
+        <form action="{% url 'soc:edit_picture' user.id %}" method="post" enctype="multipart/form-data">
+            <h1 style="text-align: center;">Edit Profile Pic</h1>
+            {% csrf_token %}  
+            <div class="form-group" style="text-align: center; margin-left:40%; margin-right: 50%; width: 300px;">
+                <input type="file" name="profile_picture" class="form-control" id="formFile" required>
+                <label for="formFile" class="form-label">Upload New Profile Image</label>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</div>
+<div style="text-align: center;">
+    <h2>Who Can See Your Profile Information?</h2>
+    <form action="{% url 'soc:profile_info_privacy' user.id %}" method="post">
+        {% csrf_token %}
+        <div class="form-check">
+            {% if user.profile_info == 'Public' %}
+                <input class="form-check-input" type="radio" name="info_privacy" id="flexRadioDefault1" value="public" checked>
+            {% else %}
+                <input class="form-check-input" type="radio" name="info_privacy" id="flexRadioDefault1" value="public">
+            {% endif %}
+            <label class="form-check-label" for="flexRadioDefault1">
+            Public
+            </label>
+        </div>
+        <div class="form-check">
+            {% if user.profile_info == 'Followers' %}
+                <input class="form-check-input" type="radio" name="info_privacy" id="flexRadioDefault2" value="followers" checked>
+            {% else %}
+                <input class="form-check-input" type="radio" name="info_privacy" id="flexRadioDefault2" value="followers">
+            {% endif %}
+            <label class="form-check-label" for="flexRadioDefault2">
+            Only Followers
+            </label>
+        </div>
+        <div class="form-check">
+            {% if user.profile_info == 'Private' %}
+                <input class="form-check-input" type="radio" name="info_privacy" id="flexRadioDefault3" value="private" checked>
+            {% else %}
+                <input class="form-check-input" type="radio" name="info_privacy" id="flexRadioDefault3" value="private">
+            {% endif %}
+            <label class="form-check-label" for="flexRadioDefault2">
+            Private
+            </label>
+        </div>
+        <div class="form-group" style="text-align: center;">
+            <button class="btn btn-primary" type="submit">Change Privacy Settings</button>
+
+        </div>
+    </form>
+    
+</div>
+
+<div class="main-profile">
+    <h1>Name : {{user.username}}</h1>
+    <h2>You Have Posted <a href="/my-posts">{{posts_count}}</a> Status</h2>
+    <h2>You Have Liked <a href="#" data-toggle="modal" data-target="#liked_posts">{{likes_amount}}</a> Post</h2>
+    <h2>You Reached {{liked_amount}} Likes On Your Posts</h2>
+    <h2>You Have <a href="#"  data-toggle="modal" data-target="#follower">{{follower_amount}}</a> Followers</h2>
+    <h2>You Followed <a href="#"  data-toggle="modal" data-target="#followed">{{followed_amount}}</a> User</h2>
+    <h1>Your Password : {{user.password}}</h1>
+</div>
+
+<div id="follower" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Your Followers</h4>
+
+            </div>
+            <div class="modal-body">
+                <li>
+                    {% for users,images in followers %}
+                        <li>
+                            <div style="display: flex;
+                            gap: 10px;
+                            margin-top: 10px;">
+                                <img src="{{images.pic.url}}" alt="pfp" width="40" height="40" style="border-radius: 50%;">
+                                <h3><a href="{% url 'soc:user_main_profile' users.id %}">{{users.username}}</a></h3>
+                            </div>
+                        </li>
+                    {% endfor %}
+                    
+                </li>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<div id="followed" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Following</h4>
+
+            </div>
+            <div class="modal-body">
+                <ol>
+                    {% for users,images in following %}
+                        <li>
+                            <div style="display: flex;
+                            gap: 10px;
+                            margin-top: 10px;">
+                            <img src="{{images.pic.url}}" alt="pfp" width="40" height="40" style="border-radius: 50px;">
+                            <h3><a href="{% url 'soc:user_main_profile' users.id %}">{{users.username}}</a></h3>
+                            </div>
+                        </li>
+                    {% endfor %}
+                    
+                </ol>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<div id="liked_posts" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Liked Posts : {{post_content|length}}</h4>
+
+            </div>
+            <div class="modal-body">
+                {% if post_content %}
+                    <ol>
+                        {% for posts in post_content %}
+                            <li><h3 style="text-overflow: ellipsis;
+                                overflow: hidden;
+                                white-space: nowrap;
+                                Width:100%;">{{forloop.counter}} : {{posts}}</h3></li>
+                        {% endfor %}
+                        
+                    </ol>
+                    <div style="text-align: center;">
+                        <button type="button" class="btn btn-primary"><a href="{% url 'soc:liked_posts' %}" style="color: white;">See Posts</a></button>
+                    </div>
+        
+                {% else %}
+                    <div style="text-align: center;">
+                        <h1>No Post To Show</h1>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+{% endblock %}

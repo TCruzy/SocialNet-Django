@@ -1,0 +1,106 @@
+
+{% extends 'main.htm' %}
+{% block content %}
+<!-- make simple div container as blog post -->
+{% if posts %}
+{% for p in posts %}
+
+    <div class="blog-post">
+        <div class="d-flex align-items-end flex-column">
+            <div class="dropdown" style="margin-right: 60px;">
+                <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                </a>
+              
+                {% if p.user.username == request.session.username %}
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <a class="dropdown-item" href="{% url 'soc:edit_post' p.post.postId.id %}">Edit Post</a>
+                        <a class="dropdown-item" href="{% url 'soc:delete_post' p.post.postId.id %}">Delete Post</a>
+                    </div>
+                {% else %}
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <a class="dropdown-item" href="#">Report Post</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div><p>post date : {{ p.post.postId.post_date}}</p></div>
+        <!-- make a div container for the title -->
+        {% if p.post.postId.poster_type == 'user' and p.user.username != request.session.username %}
+            <div class="blog-post-title">
+                <img src="{{p.user.profile_pic.url}}" alt="pfp" width="50" style="border-radius: 50px;">
+                <a href="{% url 'soc:user_main_profile' p.user.id %}">{{p.user.username|upper}}</a>
+        
+            </div>
+        {% elif p.post.poster_type == 'user' and p.user.username == request.session.username %}
+            <div class="blog-post-title">
+                <img src="{{p.user.profile_pic.url}}" alt="pfp" width="50" height="50" style="border-radius: 50%">
+                <a href="{% url 'soc:main_profile' p.user.username %}">{{p.user.username|upper}}</a>
+        
+            </div>
+        {% elif p.post.postId.poster_type == 'anonym' and  p.user.username == request.session.username %}
+            <div class="blog-post-title">
+                <img src="{{p.user.profile_pic.url}}" alt="pfp" width="50" style="border-radius: 50px;">
+                <a href="{% url 'soc:user_posts' p.user.id %}">{{p.user.username|upper}}</a><h2 style="color: black;margin-top: 7px;">as Anonymous</h2>
+        
+            </div>
+        {% elif p.post.postId.poster_type == 'anonym' and p.user.username != request.session.username %}
+            <div class="blog-post-title">
+                <img src="/media/static/img/anonym.webp" alt="anonym" width="50" style="border-radius: 50px;">
+                <a href="">Anonymous</a>
+        
+            </div>
+        {% endif %}
+        <div class="blog-post-body">
+            <!-- make a p tag for the body -->
+            <h2>{{p.post.postId.post_content}}</h2>
+        </div>
+
+        {% if p.post.postId.image %}
+            <img src="{{p.post.postId.image.url}}" alt="img" width="500">
+        {% endif %}
+        
+        <!-- make a div container for the body -->
+            <form action="{% url 'soc:like_post' %}" method="post">
+                {% csrf_token %}
+                <input type = "hidden" name = "postid" value = {{p.post.postId.id}} />
+                {% if p.liked_by|length != 0 %}
+                <div class="liked_by">
+                    <p>Liked By : </p>
+                    {% for user in p.liked_by %}
+                    <h5>{{ user }}</h5>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <div class="form-row align-items-center d-flex justify-content-center">
+                <input type = "hidden" name = "page" value = "liked_posts" />
+                {% if p.liked_by_me %}
+                    <input type = "hidden" name = "like_status" value = "unlike" />
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-primary mb-2" style="border-radius: 50px;background-color: rgb(233, 83, 83); border-color: rgb(233, 83, 83);">Unlike</button>
+                    </div>
+                {% else %}
+                <div class="col-auto">
+                    <input type = "hidden" name = "like_status" value = "like" />
+                    <button type="submit" class="btn btn-primary mb-2" style="border-radius: 50px;">Like</button>
+                </div>
+                {% endif %}
+                <h5>{{p.liked_by|length}} like </h5>                 
+                </div>
+            </form>
+        {{p.post.postId.like}}
+    
+    </div>
+    
+{% endfor %}
+{% else %}
+    <div style="text-align: center;">
+        <p>No posts yet</p>
+    </div>
+{% endif %}
+<form action="/logout">
+    {% csrf_token %}
+    <fieldset style="margin-top: 40px; margin-bottom: 15px;" class="d-flex justify-content-center">
+        <button name="submit" type="submit" class="btn btn-danger">Log Out</button>
+    </fieldset>
+</form>
+{% endblock %}

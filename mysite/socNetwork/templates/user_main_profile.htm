@@ -1,0 +1,141 @@
+{% extends 'main.htm' %}
+
+{% block content %}
+<div style="text-align: center;">
+    <img src="{{user.profile_pic.url}}" alt="pfp" width="180" height="180" style="border-radius: 50%;">
+</div>
+
+<div class="main-profile">
+    <h1>Name : {{user.username}}</h1>
+    {% if user.profile_info == 'Public' %}
+        <h2>That User Posted <a href="{% url 'soc:user_posts' user.id %}">{{posts_count}}</a> Status</h2>
+        <h2>That User Liked <a href="#" data-toggle="modal" data-target="#liked_posts">{{likes_amount}}</a> Post</h2>
+        <h2>That User Reached {{liked_amount}} Likes On His/Her Posts</h2>
+        <h2>That User Have <a href="#"  data-toggle="modal" data-target="#follower">{{follower_amount}}</a> Followers</h2>
+        <h2>That User Followed <a href="#"  data-toggle="modal" data-target="#followed">{{followed_amount}}</a> User</h2>
+    {% endif %}
+    {% if user.profile_info == 'Private' %}
+        <div style="text-align: center;">
+            <h1>That User is Private</h2>
+        </div>
+    {% endif %}
+    {% if user.profile_info == 'Followers' and request.session.username in follower_usernames %}   
+        <h2>That User Posted <a href="{% url 'soc:user_posts' user.id %}">{{posts_count}}</a> Status</h2>
+        <h2>That User Liked <a href="#" data-toggle="modal" data-target="#liked_posts">{{likes_amount}}</a> Post</h2>
+        <h2>That User Reached {{liked_amount}} Likes On His/Her Posts</h2>
+        <h2>That User Have <a href="#"  data-toggle="modal" data-target="#follower">{{follower_amount}}</a> Followers</h2>
+        <h2>That User Followed <a href="#"  data-toggle="modal" data-target="#followed">{{followed_amount}}</a> User</h2>
+    {% endif %}
+    {% if user.profile_info == 'Followers' and request.session.username not in follower_usernames %}
+    <div style="text-align: center;">
+        <h1>You Are Not {{user.username}}'s Follower and you cant see profile information</h2>
+    </div>
+    {% endif %}
+    
+</div>
+
+{% if user.profile_info == 'Followers' and request.session.username in follower_usernames or user.profile_info == 'Public' %}
+    <div id="follower" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Followers</h4>
+
+                </div>
+                <div class="modal-body">
+                    <li>
+                        {% for users,images in followers %}
+                            <li>
+                                <div style="display: flex;
+                                gap: 10px;
+                                margin-top: 10px;">
+                                    <img src="{{images.pic.url}}" alt="pfp" width="40" height="40" style="border-radius: 50%;">
+                                    <h3><a href="{% url 'soc:user_main_profile' users.id %}">{{users.username}}</a></h3>
+                                </div>
+                            </li>
+                        {% endfor %}
+                        
+                    </li>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div id="followed" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Following</h4>
+
+                </div>
+                <div class="modal-body">
+                    <ol>
+                        {% for users,images in following %}
+                            <li>
+                                <div style="display: flex;
+                                gap: 10px;
+                                margin-top: 10px;">
+                                <img src="{{images.pic.url}}" alt="pfp" width="40" height="40" style="border-radius: 50px;">
+                                <h3><a href="{% url 'soc:user_main_profile' users.id %}">{{users.username}}</a></h3>
+                                </div>
+                            </li>
+                        {% endfor %}
+                        
+                    </ol>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div id="liked_posts" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Liked Posts : {{post_content|length}}</h4>
+
+                </div>
+                <div class="modal-body">
+                    {% if post_content %}
+                        <ol>
+                            {% for posts in post_content %}
+                                <li><h3 style="text-overflow: ellipsis;
+                                    overflow: hidden;
+                                    white-space: nowrap;
+                                    Width:100%;">{{forloop.counter}} : {{posts}}</h3></li>
+                            {% endfor %}
+                            
+                        </ol>
+                        <div style="text-align: center;">
+                            <button type="button" class="btn btn-primary"><a href="{% url 'soc:users_liked_posts' user.id %}" style="color: white;">See Posts</a></button>
+                        </div>
+            
+                    {% else %}
+                        <div style="text-align: center;">
+                            <h1>No Post To Show</h1>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+{% endif %}
+
+
+
+{% endblock %}

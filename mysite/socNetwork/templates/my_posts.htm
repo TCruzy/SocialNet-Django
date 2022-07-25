@@ -1,0 +1,61 @@
+
+{% extends 'main.htm' %}
+{% block content %}
+<h1 style="text-align: center;">My Profile</h1>
+<!-- make simple div container as blog post -->
+{% if posts %}
+{% for p in posts %}
+    
+    <div class="blog-post">
+        <div class="d-flex align-items-end flex-column">
+            <div class="dropdown" style="margin-right: 60px;">
+                <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                </a>
+            
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                    <a class="dropdown-item" href="{% url 'soc:edit_post' p.post.id %}">Edit Post</a>
+                    <a class="dropdown-item" href="{% url 'soc:delete_post' p.post.id %}">Delete Post</a>
+                </div>
+            </div>
+        </div>
+        <div><p>post date : {{ p.post.post_date}}</p></div>
+        <!-- make a div container for the title -->
+        {% if p.post.poster_type == 'anonym' %}
+            <div class="blog-post-title">
+                <!-- make a h1 tag for the title -->
+                <img src="{{p.user.pic.url}}" alt="pfp" width="50" height="50" style="border-radius: 50%">
+                <a href="{% url 'soc:main_profile' p.user.username %}">{{p.user.username|upper}}</a><h2 style="color: black; margin-top: 7px;">as Anonymous</h2>
+        
+            </div>
+        {% else %}
+            <div class="blog-post-title">
+                <!-- make a h1 tag for the title -->
+                <img src="{{p.user.pic.url}}" alt="pfp" width="50" height="50" style="border-radius: 50%">
+                <a href="{% url 'soc:main_profile' p.user.username %}">{{p.user.username|upper}}</a>
+        
+            </div>
+        {% endif %}
+    
+        <div class="blog-post-body">
+            <!-- make a p tag for the body -->
+            <h2>{{p.post.post_content}}</h2>
+        </div>
+        {% if p.post.image %}
+            <img src="{{p.post.image.url}}" alt="img" width="500">
+        {% endif %}
+        <!-- make a div container for the body -->
+    </div>
+    
+{% endfor %}
+{% else %}
+    <div style="text-align: center;">
+        <p>No posts yet</p>
+    </div>
+{% endif %}
+<form action="/logout">
+    {% csrf_token %}
+    <fieldset style="margin-top: 40px; margin-bottom: 15px;" class="d-flex justify-content-center">
+        <button name="submit" type="submit" class="btn btn-danger">Log Out</button>
+    </fieldset>
+</form>
+{% endblock %}
