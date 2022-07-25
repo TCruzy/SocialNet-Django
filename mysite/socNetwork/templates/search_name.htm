@@ -18,7 +18,7 @@
                 <tr>
                     <th><img src="{{user.user.profile_pic.url}}" alt="pfp" width="50" height="50" style="border-radius: 30px;"></th>
                     <th scope="row">{{user.user.username}}</th>
-                    {% if user.user.username == request.user.username %}
+                    {% if user.user.username == request.session.username %}
                         <td><a href="{% url 'soc:main_profile' user.user.username %}">{{user.user.username}}</a></td>
                     {% else %}
                         <td><a href="{% url 'soc:user_main_profile' user.user.id %}">{{user.user.username}}</a></td>
@@ -27,7 +27,7 @@
                     <td>
                         <form action="{% url 'soc:follow_user' user.user.id %}" method="post">
                             {% csrf_token %}
-                            {% if user.user.username != request.user.username %}
+                            {% if user.user.username != request.session.username %}
                                 {% if user.followed_by_me %}
                                     <input type = "hidden" name = "follow_status" value = "unfollow" />
                                     <div class="col-auto">

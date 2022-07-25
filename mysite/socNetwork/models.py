@@ -12,6 +12,10 @@ class User(models.Model):
     password = models.CharField(max_length=20)
     profile_pic = models.ImageField(upload_to='static/pfp/', default='static/pfp/default.png')
     profile_info = models.CharField(max_length=20, default='Public')   
+    last_login = models.DateTimeField(default=timezone.now)
+    
+    def check_password(self, password):
+        return self.password == password
 
 
 class Posts(models.Model):
