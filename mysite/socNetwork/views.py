@@ -156,6 +156,8 @@ def my_posts(request):
 #@login_required(redirect_field_name='next')
 def main_profile(request, username):
     if user_is_authenticated(request):
+        if username != request.session['username']:
+            return HttpResponseRedirect(reverse('soc:home'))      
         try:
             user = User.objects.get(username=username)
             
